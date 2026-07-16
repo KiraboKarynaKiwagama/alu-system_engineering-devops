@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blush: #fdf3f5;
+            --rose: #d98ca3;
+            --deep-rose: #b8607e;
+            --mauve: #9c7480;
+            --hairline: #f0d9e0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--blush);
+            color: var(--mauve);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            text-align: center;
+            max-width: 420px;
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--rose);
+            margin: 0 0 18px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 500;
+            font-size: 130px;
+            line-height: 1;
+            margin: 0;
+            color: var(--deep-rose);
+            letter-spacing: 0.02em;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background-color: var(--hairline);
+            margin: 28px auto;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 0 0 6px;
+            color: var(--mauve);
+        }
+
+        .quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 19px;
+            color: var(--rose);
+            margin-bottom: 22px;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 26px;
+            font-size: 12px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--deep-rose);
+            text-decoration: none;
+            border-bottom: 1px solid var(--hairline);
+            padding-bottom: 4px;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--rose);
+            border-color: var(--rose);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <p class="eyebrow">Lost &amp; Wandering</p>
+        <h1>404</h1>
+        <div class="divider"></div>
+        <p class="quote">Ceci n'est pas une page</p>
+        <p>The page you're looking for has wandered off somewhere prettier.</p>
+        <a href="/">Take me home</a>
+    </div>
+</body>
+</html>
