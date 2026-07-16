@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Installs and configures HAProxy as a round-robin load balancer for web-01 and web-02
+
+set -e
+
+WEB01_IP="<REPLACE_WITH_WEB01_IP>"
+WEB02_IP="<REPLACE_WITH_WEB02_IP>"
+
+# 1. Install HAProxy
+apt-get update -y
+apt-get install -y haproxy
+
+# 2. Enable HAProxy service (disabled by default on Ubuntu)
+sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+
+# 3. Back up original config once
+if [ ! -f /etc/haproxy/haproxy.cfg.orig ]; then
+    cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.orig
+fi
+
+# 4. Add frontend/backend config (idempotent: remove old block first if re-run)
+sed -i '/^frontend http_front/,$d' /etc/haproxy/haproxy.cfg
+
+cat >> /etc/haproxy/haproxy.cfg <<EOF
+
+frontend http_front
+    bind *:80
+    stats uri /haproxy?stats
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web-01 ${WEB01_IP}:80 check
+    server web-02 ${WEB02_IP}:80 check
+EOF
+
+# 5. Restart HAProxy to apply changes
+service haproxy restart
