@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-# Installs and configures Nginx to serve a page containing Holberton School
+# Install nginx on server
 
-sudo apt-get update
-sudo apt-get install -y nginx
-ufw enable
-ufw allow 'Nginx HTTP'
-ufw allow 'OpenSSH'
-echo "Holberton School" > /var/www/html/index.html
-sudo service nginx start
+
+sudo apt update && sudo apt install nginx -y
+echo "<html><p>Holberton School</p></html>" > /var/www/html/index.nginx-debian.html
+sudo service nginx restart
 
