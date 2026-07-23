@@ -1,36 +1,10 @@
 #!/usr/bin/env bash
-# Installs Nginx with the following configurations:
-#+    Listens on port 80.
-#+    Returns a page containing "Holberton School" when queried
-#+    at the root with a curl GET request.
-# Configures /redirect_me as a "301 Moved Permanently".
-# Includes a custom 404 page containing "Ceci n'est pas une page".
+#Create script that configures ubuntu machine to create custom 404 not found page
 
 sudo apt-get update
 sudo apt-get install -y nginx
 
-mkdir -p /var/www/html
-echo "Holberton School for the win!" > /var/www/html/index.html
-echo "Ceci n'est pas une page" > /var/www/html/404.html
-
-printf %s "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    root /var/www/html;
-    index index.html index.htm;
-    server_name _;
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-    error_page 404 /404.html;
-    location = /404.html {
-        root /var/www/html;
-        internal;
-    }
-}
-" > /etc/nginx/sites-available/default
-
+sudo echo "<html><title>Ceci n'est pas une page</title></html>" | sudo tee /var/www/html/404.html
+grep -q "error_page 404" /etc/nginx/sites-available/default || \
+sudo sed -i '/server_name _;/a \\n\error_page 404 /404.html;' /etc/nginx/sites-available/default
 sudo service nginx restart
