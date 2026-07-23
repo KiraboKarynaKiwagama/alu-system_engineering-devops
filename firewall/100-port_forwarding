@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# setup_port_forwarding.sh
+#
+# Configures ufw on web-01 to redirect incoming TCP traffic on port 8080
+# to port 80, where nginx is actually listening.
+#
+# Run this ON web-01 as root or with sudo:
+#   sudo bash setup_port_forwarding.sh
+
+set -e
+
+RULES_FILE="/etc/ufw/before.rules"
+BACKUP_FILE="/etc/ufw/before.rules.bak.$(date +%s)"
+
+echo "==> Backing up $RULES_FILE to $BACKUP_FILE"
+sudo cp "$RULES_FILE" "$BACKUP_FILE"
+
+echo "==> Allowing 8080/tcp through ufw"
+sudo ufw allow 8080/tcp
+
+# Only insert the NAT block if it isn't already present, so this script
+# can be re-run safely without duplicating rules.
+if sudo grep -q -- "--dport 8080 -j REDIRECT --to-port 80" "$RULES_FILE"; then
+    echo "==> NAT redirect rule already present, skipping insert"
+else
+    echo "==> Inserting NAT PREROUTING redirect (8080 -> 80) at top of $RULES_FILE"
+    sudo tee /tmp/nat_block.txt > /dev/null <<'EOF'
+*nat
+:PREROUTING ACCEPT [0:0]
+
+# Redirect incoming TCP traffic on port 8080 to port 80,
+# so nginx (listening only on 80) serves both ports
+-A PREROUTING -p tcp --dport 8080 -j REDIRECT --to-port 80
+
+COMMIT
+
+EOF
+    sudo bash -c "cat /tmp/nat_block.txt $RULES_FILE > /tmp/before.rules.new && mv /tmp/before.rules.new $RULES_FILE"
+    sudo rm -f /tmp/nat_block.txt
+fi
+
+echo "==> Reloading ufw to apply changes"
+sudo ufw reload
+
+echo "==> Done. Current ufw status:"
+sudo ufw status verbose
+
+echo
+echo "==> Verify the NAT rule is active:"
+sudo iptables -t nat -L PREROUTING -n -v
